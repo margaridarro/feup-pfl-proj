@@ -5,7 +5,6 @@ import Data.List
 
 
 --2.1
-
 type BigNumber = (Char, [Int])
 
 --2.2
@@ -14,12 +13,20 @@ scanner (x:xs)  | x == '-' || x == '+' = (x, map digitToInt xs)
                 | otherwise = ('+', digitToInt x : map digitToInt xs)
 
                 
-intToDigit 1
---2.3
--- output
+                
+teste:: [Int] -> String
+teste a = map intToDigit a
 
--- output:: BigNumber -> String
--- output (x:xs) = x + concat (xs)
+--2.3
+{-
+output1:: BigNumber -> Char
+output1 a = fst a
+
+output2:: BigNumber -> String
+output2 a = map intToDigit (snd a)
+-}
+output:: BigNumber -> String
+output a = [fst a] ++ map intToDigit (snd a)
 
 
 --2.4
