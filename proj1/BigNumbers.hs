@@ -34,11 +34,7 @@ somaBN a b  | getSignal a == getSignal b  = (fst a, calcSoma (snd a) (snd b))
             | (maxBN a b) == a            = (calcSomaSignal a b, calcSub (snd a) (snd b))
             | otherwise                   = (calcSomaSignal a b, calcSub (snd b) (snd a))
             
-
-
--- testeBase: somaBN ('+',[1,2,1,2,4]) ('+',[2,1,2,4])
-
--- testeSignal: somaBN ('+',[1,1,2]) ('-',[1, 2])
+-- testeSoma: somaBN ('+',[1,1,2]) ('-',[1, 2])
 
 ------------------
 ----2.5-subBN-----
@@ -51,8 +47,15 @@ subBN a b | getDigits a == getDigits b && getSignal a == getSignal b  = ((' '), 
 
 -- testeSub: subBN ('+',[1,1,2]) ('+',[1, 2])
 
---2.6
---mulBN
+-----------------
+----2.6-mulBN----
+-----------------
+mulBN:: BigNumber -> BigNumber -> BigNumber
+mulBN a b | getIntList a == [0] || getIntList b == [0] = (' ', [0])
+          | getSignal a == getSignal b = ('+', calcMul (snd a) (snd b))
+          | otherwise                  = ('-', calcMul (snd a) (snd b))
+
+-- testeMul: mulBN ('+',[1,1,1]) ('-',[1, 1])
 
 --2.7
 --divBN:: BigNumber -> BigNumber -> (BigNumber, BigNumber)
@@ -134,5 +137,26 @@ sub a b carry n | n < (max (length a) (length b)) && res_sub > (a !! n) = [res_s
 calcSub:: [Int] -> [Int] -> [Int]
 calcSub a b = removeLeftZeros (reverseList (sub (reverseList a) (reverseList b) 0 0))  
 
+--mul
+zeros:: Int->[Int]
+zeros n = take n [0, 0..]
 
+mulPos:: Int -> [Int] -> Int -> Int -> [Int]
+mulPos a_value b carry nb | nb > length b  = []
+                          | nb == length b = [carry]
+                          | otherwise      = [calcRest res_mul] ++ mulPos a_value b (calcCarry res_mul) (nb + 1)
+    where res_mul = a_value * (b !! nb) + carry
+    
 
+mul:: [Int] -> [Int] -> Int -> Int -> Int -> [[Int]]
+mul a b carry na nb  | na < length a = [zeros na ++ mulPos (a !! na) b 0  0] ++ mul a b 0 (na + 1) nb 
+                     | otherwise     = []
+                     
+calcMulListas:: [Int] -> [Int] -> [[Int]]
+calcMulListas a b = [ removeLeftZeros (reverseList x) | x <- mul (reverseList a) (reverseList b) 0 0 0]
+                    
+somaMulListas:: [[Int]] -> [Int]
+somaMulListas (x:xs) = foldr (calcSoma) x xs -- O ORGULHO DESTE PROJETO RESIDE NESTA LINHA AAAAAAAAAAAa
+
+calcMul:: [Int] -> [Int] -> [Int]
+calcMul a b = somaMulListas (calcMulListas a b)
