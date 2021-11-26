@@ -13,13 +13,16 @@ type BigNumber = (Char, [Int])
 ----2.2----
 -----------
 scanner:: String -> BigNumber
-scanner (x:xs)  | x == '-' || x == '+' = (x, removeLeftZeros (map digitToInt xs))
+scanner (x:xs)  | (x == '-' || x == '+') && (removeLeftZeros (map digitToInt xs) == [0]) = (' ', [0])
+                | x == '-' || x == '+' = (x, removeLeftZeros (map digitToInt xs))
+                | removeLeftZeros (digitToInt x : map digitToInt xs) == [0] = (' ', [0])
                 | otherwise = ('+', removeLeftZeros (digitToInt x : map digitToInt xs))
 -----------
 ----2.3----
 -----------
 output:: BigNumber -> String
-output a = [getSignal a] ++ getDigits a
+output a | getDigits a == ['0']  = "0"
+         | otherwise             = [getSignal a] ++ getDigits a
 
 
 -----------
@@ -68,14 +71,16 @@ calcSub:: [Int] -> [Int] -> [Int] -- TODO
 calcSub a b = a
 ------------------
 somaBN:: BigNumber -> BigNumber -> BigNumber
-somaBN a b  | getSignal a == getSignal b    =  (fst a, calcSoma (snd a) (snd b))
+somaBN a b  | getSignal a == getSignal b    = (fst a, calcSoma (snd a) (snd b))
             | getDigits a == getDigits b    = ((' '), [0])
             | (getMaxBN a b) == a           = (calcSomaSignal a b, calcSub (snd a) (snd b))
             | otherwise                     = (calcSomaSignal a b, calcSub (snd b) (snd a))
             
 
 
--- teste: somaBN ('+',[1,2,1,2,4]) ('+',[2,1,2,4])
+-- testeBase: somaBN ('+',[1,2,1,2,4]) ('+',[2,1,2,4])
+
+-- testeSignal: somaBN ('+',[1,2,1,2,4]) ('+',[2,1,2,4])
 
 
 --2.5
@@ -103,8 +108,10 @@ getIntList:: BigNumber -> [Int]
 getIntList a = snd a
 
 removeLeftZeros::   [Int] -> [Int]
-removeLeftZeros x   | (head x == 0) = [] ++ removeLeftZeros (drop 1 x)
-                    | otherwise = x
+removeLeftZeros x   | head x == 0 && length x == 1 = [0]
+                    | head x == 0                  = [] ++ removeLeftZeros (drop 1 x)
+                    | otherwise                    = x
+
 
 reverseList:: [a] -> [a]
 reverseList [] = []
