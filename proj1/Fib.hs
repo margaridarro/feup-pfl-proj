@@ -1,3 +1,12 @@
+module BigNumbers(
+    BigNumber,
+    scanner,
+    output,
+) where
+
+
+type BigNumber = (Char, [Int])
+
 --1.1
 fibRec :: (Integral a) => a -> a
 fibRec 0 = 0
@@ -11,3 +20,8 @@ fibLista n = [fibRec (x) | x <- [0..]] !! fromIntegral n
 --1.3
 fibListaInfinita:: (Integral a)  => a -> a
 fibListaInfinita n = [fibRec (x) | x <- [0..]] !! fromIntegral n
+
+
+
+--3
+--fibRecBN:: BigNumber
