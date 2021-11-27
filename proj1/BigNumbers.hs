@@ -94,15 +94,15 @@ invertSignal a | a == '+'  = '-'
                | otherwise = '+'
 
 --- Comparison
-auxMaxBN:: [Int] -> [Int] -> Int
-auxMaxBN a b | head a > head b  = 0
-             | head a < head b  = 1
-             | otherwise        = auxMaxBN (drop 1 a) (drop 1 b)
+isMaxBN:: [Int] -> [Int] -> Bool
+isMaxBN a b | head a > head b  = True
+             | head a < head b  = False
+             | otherwise        = isMaxBN (drop 1 a) (drop 1 b)
 
 maxBN:: BigNumber -> BigNumber -> BigNumber
-maxBN a b | length (getIntList a) > length (getIntList b) = a
-          | length (getIntList a) < length (getIntList b) = b
-          | auxMaxBN (getIntList a)  (getIntList b) == 0  = a
+maxBN a b | length (getIntList a) > length (getIntList b)   = a
+          | length (getIntList a) < length (getIntList b)   = b
+          | isMaxBN (getIntList a) (getIntList b)           = a
           | otherwise = b
 
 --- Soma
@@ -119,7 +119,7 @@ somaPos a b carry n | n < length a && n < length b  = (a !! n) + (b !! n) + carr
                     | otherwise                     = carry
 
 soma:: [Int] -> [Int] -> Int -> Int -> [Int]
-soma a b c n  | n < (max (length a) (length b) + 1) = [ calcRest res_soma ] ++ soma a b (calcCarry res_soma) (n+1) 
+soma a b c n  | n < (max (length a) (length b) + 1) = [calcRest res_soma] ++ soma a b (calcCarry res_soma) (n+1) 
               | otherwise  = []
         where res_soma = somaPos a b c n
 
@@ -127,8 +127,8 @@ calcSoma:: [Int] -> [Int] -> [Int]
 calcSoma a b = removeLeftZeros (reverseList (soma (reverseList a) (reverseList b) 0 0))
 
 calcSomaSignal:: BigNumber -> BigNumber -> Char
-calcSomaSignal a b | auxMaxBN (getIntList a) (getIntList b) == 0 = getSignal a
-                   | otherwise                                   = getSignal b
+calcSomaSignal a b | isMaxBN (getIntList a) (getIntList b) = getSignal a
+                   | otherwise                             = getSignal b
                    
 --- Sub
 subPos:: [Int] -> [Int] -> Int -> Int -> Int
@@ -153,12 +153,12 @@ mulPos a_value b carry nb | nb > length b  = []
     where res_mul = a_value * (b !! nb) + carry
     
 
-mul:: [Int] -> [Int] -> Int -> Int -> Int -> [[Int]]
-mul a b carry na nb  | na < length a = [zeros na ++ mulPos (a !! na) b 0  0] ++ mul a b 0 (na + 1) nb 
-                     | otherwise     = []
+mul:: [Int] -> [Int] -> Int -> [[Int]]
+mul a b na | na < length a = [zeros na ++ mulPos (a !! na) b 0  0] ++ mul a b (na + 1) 
+           | otherwise     = []
                      
 calcMulListas:: [Int] -> [Int] -> [[Int]]
-calcMulListas a b = [ removeLeftZeros (reverseList x) | x <- mul (reverseList a) (reverseList b) 0 0 0]
+calcMulListas a b = [ removeLeftZeros (reverseList x) | x <- mul (reverseList a) (reverseList b) 0]
                     
 somaMulListas:: [[Int]] -> [Int]
 somaMulListas (x:xs) = foldr (calcSoma) x xs -- O ORGULHO DESTE PROJETO RESIDE NESTA LINHA AAAAAAAAAAAA
