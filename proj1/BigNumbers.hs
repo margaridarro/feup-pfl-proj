@@ -42,8 +42,8 @@ somaBN a b  | getSignal a == getSignal b  = (fst a, calcSoma (snd a) (snd b))
 subBN:: BigNumber -> BigNumber -> BigNumber
 subBN a b | getDigits a == getDigits b && getSignal a == getSignal b  = ((' '), [0])
           | getSignal a /= getSignal b = (getSignal (maxBN a b), calcSoma (snd a) (snd b))
-          | (maxBN a b) == a  = (getSignal a, calcSub (snd a) (snd b))
-          | (maxBN a b) == b  = (getSignal b, calcSub (snd b) (snd a))
+          | (maxBN a b) == a           = (getSignal a, calcSub (snd a) (snd b))
+          | (maxBN a b) == b           = (invertSignal (getSignal b), calcSub (snd b) (snd a))
 
 -- testeSub: subBN ('+',[1,1,2]) ('+',[1, 2])
 
@@ -57,7 +57,9 @@ mulBN a b | getIntList a == [0] || getIntList b == [0] = (' ', [0])
 
 -- testeMul: mulBN ('+',[1,1,1]) ('-',[1, 1])
 
---2.7
+-----------------
+----2.7-divBN----
+-----------------
 --divBN:: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 
 
@@ -65,7 +67,7 @@ mulBN a b | getIntList a == [0] || getIntList b == [0] = (' ', [0])
 ------------------------
 -- Auxiliar Functions---
 ------------------------
----generic
+--- Generic
 getSignal:: BigNumber -> Char
 getSignal a = fst a
 
@@ -84,20 +86,26 @@ reverseList:: [a] -> [a]
 reverseList [] = []
 reverseList (x:xs) = reverseList xs ++ [x]
 
----comp
+zeros:: Int->[Int]
+zeros n = take n [0, 0..]
+
+invertSignal:: Char -> Char
+invertSignal a | a == '+'  = '-'
+               | otherwise = '+'
+
+--- Comparison
 auxMaxBN:: [Int] -> [Int] -> Int
-auxMaxBN a b | length a > length b = 0
-             | length a < length b = 1
-             | head a > head b     = 0
-             | head a < head b     = 1
-             | otherwise           = auxMaxBN (drop 1 a) (drop 1 b)
+auxMaxBN a b | head a > head b  = 0
+             | head a < head b  = 1
+             | otherwise        = auxMaxBN (drop 1 a) (drop 1 b)
 
 maxBN:: BigNumber -> BigNumber -> BigNumber
-maxBN a b | auxMaxBN (getIntList a)  (getIntList b) == 0 = a
+maxBN a b | length (getIntList a) > length (getIntList b) = a
+          | length (getIntList a) < length (getIntList b) = b
+          | auxMaxBN (getIntList a)  (getIntList b) == 0  = a
           | otherwise = b
 
-
----soma
+--- Soma
 calcCarry:: Int -> Int
 calcCarry a = div a 10
 
@@ -122,7 +130,7 @@ calcSomaSignal:: BigNumber -> BigNumber -> Char
 calcSomaSignal a b | auxMaxBN (getIntList a) (getIntList b) == 0 = getSignal a
                    | otherwise                                   = getSignal b
                    
----sub
+--- Sub
 subPos:: [Int] -> [Int] -> Int -> Int -> Int
 subPos a b carry n | n >= length b                  = (a !! n) - carry
                    | (a !! n) >= (b !! n) + carry   = (a !! n) - ((b !! n) + carry)
@@ -137,10 +145,7 @@ sub a b carry n | n < (max (length a) (length b)) && res_sub > (a !! n) = [res_s
 calcSub:: [Int] -> [Int] -> [Int]
 calcSub a b = removeLeftZeros (reverseList (sub (reverseList a) (reverseList b) 0 0))  
 
---mul
-zeros:: Int->[Int]
-zeros n = take n [0, 0..]
-
+-- Mul
 mulPos:: Int -> [Int] -> Int -> Int -> [Int]
 mulPos a_value b carry nb | nb > length b  = []
                           | nb == length b = [carry]
@@ -156,7 +161,7 @@ calcMulListas:: [Int] -> [Int] -> [[Int]]
 calcMulListas a b = [ removeLeftZeros (reverseList x) | x <- mul (reverseList a) (reverseList b) 0 0 0]
                     
 somaMulListas:: [[Int]] -> [Int]
-somaMulListas (x:xs) = foldr (calcSoma) x xs -- O ORGULHO DESTE PROJETO RESIDE NESTA LINHA AAAAAAAAAAAa
+somaMulListas (x:xs) = foldr (calcSoma) x xs -- O ORGULHO DESTE PROJETO RESIDE NESTA LINHA AAAAAAAAAAAA
 
 calcMul:: [Int] -> [Int] -> [Int]
 calcMul a b = somaMulListas (calcMulListas a b)
