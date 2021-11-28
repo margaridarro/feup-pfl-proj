@@ -63,25 +63,29 @@ mulBN a b | getIntList a == [0] || getIntList b == [0] = (' ', [0])
 -- div_:: [Int] -> [Int] -> [Int] -> ([Int], [Int])
 -- div_ a b n | isMax a b = div_ (calcSub a b) b (calcSoma n [1])
 --            | otherwise = (n, a)
+{-
+divPos:: [Int] -> [Int] -> Int -> [Int]
+divPos a b n | isMax a b = subBN a b (n+1)
+             | otherwise = n
 
--- div_:: [Int] -> [Int] -> [Int] -> ([Int], [Int])
--- div_ a b q | isMax a b    = div_ new_a b (calcSoma q res_div)
---            | otherwise      = (q, a)
---     where 
---         res_div = divPos a b 0
---         new_a = calcSub a (calcMul res_div b)
+div_:: [Int] -> [Int] -> [Int] -> ([Int], [Int])
+div_ a b q | isMax a b    = div_ new_a b (calcSoma q res_div)
+           | otherwise      = (q, a)
+    where 
+        res_div = divPos a b 0
+        new_a = calcSub a (calcMul res_div b)
 
     
--- calcDiv:: [Int] -> [Int] -> (BigNumber, BigNumber)
--- calcDiv a b = (('+', fst res_div), ('+', snd res_div))
---     where res_div = div_ a b [0]
--- 
---     
--- divBN:: BigNumber -> BigNumber -> (BigNumber, BigNumber)
--- divBN a b   | output b == "0"     = ((' ', []), (' ', []))
---             | maxBN b a == b      = ((' ', [0]), b)
---             | otherwise           = calcDiv (snd a) (snd b)
+calcDiv:: [Int] -> [Int] -> (BigNumber, BigNumber)
+calcDiv a b = (('+', fst res_div), ('+', snd res_div))
+    where res_div = div_ a b [0]
 
+    
+divBN:: BigNumber -> BigNumber -> (BigNumber, BigNumber)
+divBN a b   | output b == "0"     = ((' ', []), (' ', []))
+            | maxBN b a == b      = ((' ', [0]), b)
+            | otherwise           = calcDiv (snd a) (snd b)
+            -}
 
 ------------------------
 -- Auxiliar Functions---
@@ -115,15 +119,15 @@ invertSignal a | a == '+'  = '-'
                
 --- Comparison
 isMax:: [Int] -> [Int] -> Bool
-isMax a b | head a > head b  = True
-          | head a < head b  = False
-          | otherwise        = isMax (drop 1 a) (drop 1 b)
+isMax a b | length a > length b = True
+          | length a < length b = False
+          | head a > head b     = True
+          | head a < head b     = False
+          | otherwise           = isMax (drop 1 a) (drop 1 b)
 
 maxBN:: BigNumber -> BigNumber -> BigNumber
-maxBN a b | length a_ > length b_   = a
-          | length a_ < length b_   = b
-          | isMax a_ b_             = a
-          | otherwise = b
+maxBN a b | isMax a_ b_  = a
+          | otherwise    = b
     where 
         a_ = removeLeftZeros (getIntList a)
         b_ = removeLeftZeros (getIntList b)
