@@ -1,11 +1,13 @@
-module BigNumbers(
-    BigNumber,
-    scanner,
-    output,
-) where
-
-
-type BigNumber = (Char, [Int])
+-- module BigNumber(
+--     BigNumber,
+--     scanner,
+--     output,
+--     somaBN,
+--     subBN,
+--     mulBN
+-- ) where
+-- 
+-- type BigNumber = (Char, [Int])
 
 --1.1
 fibRec :: (Integral a) => a -> a

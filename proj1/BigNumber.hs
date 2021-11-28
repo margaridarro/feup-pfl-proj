@@ -5,7 +5,6 @@ import Data.List
 ----------------------
 ----2.1.definition----
 ----------------------
-type Signal = Char
 type BigNumber = (Char, [Int])
 
 ------------------
@@ -59,33 +58,29 @@ mulBN a b | getIntList a == [0] || getIntList b == [0] = (' ', [0])
 -----------------
 ----2.7-divBN----
 -----------------
---divPos::[Int] -> [Int] -> (Int, Int)
-{-
 
-divPos:: [Int] -> [Int] -> Int -> Int --retorna quociente
-divPos a b n | isMax (take n a) b = calcMul quociente (10**n)
-             | otherwise          = divPos a b (n+1)
-    where quociente = --TODO AAAAAAAAAAAA
+-- div_:: [Int] -> [Int] -> [Int] -> ([Int], [Int])
+-- div_ a b n | isMax a b = div_ (calcSub a b) b (calcSoma n [1])
+--            | otherwise = (n, a)
 
-div_:: [Int] -> [Int] -> [Int] -> ([Int], [Int])
-div_ a b q | isMax a b    = div_ new_a b (calcSoma q res_div)
-           | otherwise      = (q, a)
-    where 
-        res_div = divPos a b 0
-        new_a = calcSub a (calcMul res_div b)
+-- div_:: [Int] -> [Int] -> [Int] -> ([Int], [Int])
+-- div_ a b q | isMax a b    = div_ new_a b (calcSoma q res_div)
+--            | otherwise      = (q, a)
+--     where 
+--         res_div = divPos a b 0
+--         new_a = calcSub a (calcMul res_div b)
 
     
-calcDiv:: [Int] -> [Int] -> (BigNumber, BigNumber)
-calcDiv a b = (('+', fst res_div), ('+', snd res_div))
-    where res_div = div_ a b [0]
+-- calcDiv:: [Int] -> [Int] -> (BigNumber, BigNumber)
+-- calcDiv a b = (('+', fst res_div), ('+', snd res_div))
+--     where res_div = div_ a b [0]
+-- 
+--     
+-- divBN:: BigNumber -> BigNumber -> (BigNumber, BigNumber)
+-- divBN a b   | output b == "0"     = ((' ', []), (' ', []))
+--             | maxBN b a == b      = ((' ', [0]), b)
+--             | otherwise           = calcDiv (snd a) (snd b)
 
-    
-divBN:: BigNumber -> BigNumber -> (BigNumber, BigNumber)
-divBN a b | output b == "0"   = ((' ', []), (' ', []))
-        | maxBN b a == b      = ((' ', [0]), b)
-        | otherwise           = calcDiv (snd a) (snd b)
-
-   -}
 
 ------------------------
 -- Auxiliar Functions---
@@ -182,7 +177,7 @@ mulPos a_value b carry nb | nb > length b  = []
     
 
 mul:: [Int] -> [Int] -> Int -> [[Int]]
-mul a b na | na < length a = [zeros na ++ mulPos (a !! na) b 0  0] ++ mul a b (na + 1)
+mul a b na | na < length a = [zeros na ++ mulPos (a !! na) b 0 0] ++ mul a b (na + 1)
            | otherwise     = []
                      
 calcMulListas:: [Int] -> [Int] -> [[Int]]
