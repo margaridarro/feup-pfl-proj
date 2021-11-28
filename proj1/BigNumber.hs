@@ -120,11 +120,13 @@ isMax a b | head a > head b  = True
           | otherwise        = isMax (drop 1 a) (drop 1 b)
 
 maxBN:: BigNumber -> BigNumber -> BigNumber
-maxBN a b | length (getIntList a) > length (getIntList b)   = a
-          | length (getIntList a) < length (getIntList b)   = b
-          | isMax (getIntList a) (getIntList b)             = a
+maxBN a b | length a_ > length b_   = a
+          | length a_ < length b_   = b
+          | isMax a_ b_             = a
           | otherwise = b
-
+    where 
+        a_ = removeLeftZeros (getIntList a)
+        b_ = removeLeftZeros (getIntList b)
           
 --- Soma
 calcCarry:: Int -> Int
