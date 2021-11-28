@@ -1,3 +1,4 @@
+module BigNumber where
 import Data.Char (digitToInt)
 import Data.Char (intToDigit)
 import Data.List
@@ -144,7 +145,7 @@ soma a b c n  | n < (max (length a) (length b) + 1) = [calcRest res_soma] ++ som
         where res_soma = somaPos a b c n
 
 calcSoma:: [Int] -> [Int] -> [Int]
-calcSoma a b = removeLeftZeros (reverseList (soma (reverseList a) (reverseList b) 0 0))
+calcSoma a b = removeLeftZeros (reverseList (soma (reverseList (removeLeftZeros a)) (reverseList (removeLeftZeros b)) 0 0))
 
 calcSomaSignal:: BigNumber -> BigNumber -> Char
 calcSomaSignal a b | isMax (getIntList a) (getIntList b) = getSignal a
@@ -165,7 +166,7 @@ sub a b carry n | n < (max (length a) (length b)) && res_sub > (a !! n) = [res_s
     where res_sub = subPos a b carry n
              
 calcSub:: [Int] -> [Int] -> [Int]
-calcSub a b = removeLeftZeros (reverseList (sub (reverseList a) (reverseList b) 0 0))  
+calcSub a b = removeLeftZeros (reverseList (sub (reverseList (removeLeftZeros a)) (reverseList (removeLeftZeros b)) 0 0))  
 
 
 -- Mul
@@ -181,7 +182,7 @@ mul a b na | na < length a = [zeros na ++ mulPos (a !! na) b 0 0] ++ mul a b (na
            | otherwise     = []
                      
 calcMulListas:: [Int] -> [Int] -> [[Int]]
-calcMulListas a b = [ removeLeftZeros (reverseList x) | x <- mul (reverseList a) (reverseList b) 0]
+calcMulListas a b = [ removeLeftZeros (reverseList x) | x <- mul (reverseList (removeLeftZeros a)) (reverseList (removeLeftZeros b)) 0]
                     
 somaMulListas:: [[Int]] -> [Int]
 somaMulListas (x:xs) = foldr (calcSoma) x xs -- O ORGULHO DESTE PROJETO RESIDE NESTA LINHA AAAAAAAAAAAA
