@@ -1,36 +1,58 @@
 :- use_module(library(lists)).
 
-:- [display, utils, board, validation].
-
-/*
-paste: ctrl+shift+insert
-copy: ctrl+insert
-*/
+:- [display, utils, board, validation, move, win].
 
 createBoard(Board):-
     resetBoard([], 5, Board),
     printBoard(Board).
+/*
+stateManager(State):-
+    initialState.
+*/
 
-play(X):-
+play:-
     resetBoard([], 5, Board),
+    playGame('O', Board),
+    play.
+
+playGame(Player, Board, end):-
     printBoard(Board),
-    runGame(Board, X).
-    /*
-    restartGame(X), 
-    play(X).
-    */
+    printPlayerTurnMessage(Player).
+playGame(Player, Board, playing):-
+    printBoard(Board),
+    move(Player, Board, NewBoard),
+    printBoard(NewBoard),
+    playerHandler(Player, NewPlayer),
+    updateState(Board, playing, NewState),
+    playGame(NewPlayer, NewBoard, NewState).
 
-restartGame(X).    
-
-runGame(Board, X).
-
-
-
-%move(Val, Line1, Col1, Line2, Col2):-
-    %checkMove
-
-
-
-
+updateState(Board, _, NewState):-
+    draw(Board),
+    NewState = end,
+    printDrawMessage.
+updateState(Board, _, NewState):-
+    win(Board, Winner),
+    printWinMessage(Winner),
+    NewState = end.
+updateState(_, State, NewState):-
+    NewState = State.
 
 
+playerHandler('O', NewPlayer):-
+    NewPlayer = 'X'.
+playerHandler('X', NewPlayer):-
+    NewPlayer = 'O'.
+
+
+
+/*
+playTestWin:-
+    playGame('O', [[' ',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], playing).
+    
+moveTest(Player, Board):-
+    move(Player, Board, NewBoard),
+    printBoard(NewBoard).
+
+% moveTest('O', [[' ',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']]).
+
+*/

@@ -1,33 +1,79 @@
+/**
+* Move Validation
+*/
+checkMove(Player, Board, OldY/OldX, NewY/NewX):-
+    checkInitialPos(Player, Board, OldY/OldX),
+    checkFinalPos(OldY/OldX, NewY/NewX).
 /*
-checkMove()
-    checkFramePos,
-    checkPlayerPermission(),
-    checkFinalPos() % same col or line
-*/  
+Invalid Move:
+checkMove('X', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 0/5, 0/9).
+Valid Moves:
+checkMove('O', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 0/5, 0/9).
+checkMove('O', [['O',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 0/6, 4/6).
+*/
 
 /**
 * Validate Piece Choice
 */
-checkPlayerPermission(Player, Board, PosX, PosY):-
-    nth0(PosY, Board, Line),
-    nth0(PosX, Line, Elem),
-    (Elem == ' '; Elem == Player).
+checkInitialPos(Player, Board, Y/X):-
+    checkFramePos(Y/X),
+    getPosValue(Board, Y/X, Val),
+    checkPlayerPermission(Player, Val).
+
+checkPlayerPermission(Player, Val):-
+    (Val == ' '; Val == Player).
 
 /**
 * Validate Piece Destination
 */
-checkFinalPos(OldX, OldY, NewX, NewY):-
-    checkNotSamePos(OldX, OldY, NewX, NewY),
-    checkFramePos(NewX, NewY), 
-    checkValidPos(OldX, OldY, NewX, NewY).
+checkFinalPos(OldY/OldX, NewY/NewX):-
+    checkNotSamePos(OldY/OldX, NewY/NewX),
+    checkFramePos(NewY/NewX), 
+    checkValidPos(OldY/OldX, NewY/NewX).
 
-checkNotSamePos(OldX, OldY, NewX, NewY):-
-    NewX =\= OldX; NewY =\= OldY.
+checkNotSamePos(OldY/OldX, NewY/NewX):-
+    NewY \== OldY; NewX \== OldX.
 
-checkFramePos(PosX, PosY):-
-    PosX == 0; PosX == 4; 
-    PosY == 0; PosY == 4.
+checkValidPos(OldY/OldX, NewY/NewX):-
+    NewY == OldY; NewX == OldX.
 
-checkValidPos(OldX, OldY, NewX, NewY):-
-    NewX == OldX; NewY == OldXY.
 
+/**
+* Move Input Validation
+*/
+readMove(OldY/OldX, NewY/NewX):-
+    write('First, tell me the piece you would like to move.\n'),
+    readY(OldY), 
+    readX(OldX),
+    nl,
+    write('Now, tell me the place where you would like insert the piece.\n'),
+    readY(NewY),
+    readX(NewX).
+    
+readY(Y):-
+    write('Line: '), read_number(Y),
+    Y >= 0,
+    Y =< 4, !.
+readY(Y):-
+    write('Invalid Input for Line, choose a number between 0 and 4\n'),
+    readY(Y).
+
+readX(X):-
+    write('Column: '), read_number(X),
+    X >= 5,
+    X =< 9, !.
+readX(X):-
+    write('Invalid Input for Column, choose a number between 5 and 9\n'),
+    readX(X).
+
+/**
+* General Validation
+*/
+checkFramePos(Y/X):-
+    Y == 0; Y == 4; 
+    X == 5; X == 9.
+
+getPosValue(Board, Y/X, Val):-
+    X1 is X - 5,
+    nth0(Y, Board, Line),
+    nth0(X1, Line, Val).
