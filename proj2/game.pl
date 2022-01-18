@@ -11,8 +11,9 @@ stateManager(State):-
 */
 
 play:-
-    resetBoard([], 5, Board),
-    playGame('O', Board),
+    clear,
+    menu,
+    playGame('O', Board, playing). %initialplayer
     play.
 
 playGame(Player, Board, end):-
@@ -26,6 +27,34 @@ playGame(Player, Board, playing):-
     updateState(Board, playing, NewState),
     playGame(NewPlayer, NewBoard, NewState).
 
+
+/**
+* Initial Menu
+* Manage player options
+    * 1. Multiplayer - Quick Start
+    * 2. Multiplayer - Custom Board Size
+*/
+menu(Option):-
+    printWelcomeMessage,
+    readMenuOption(Option),
+    chooseMenuOption(Option, Board).
+/**
+* Option 1: Multiplayer (default 5x5?)
+* Option 2: Custom Board Size
+*/
+chooseMenuOption(1, Board):-
+    resetBoard([], 5, Board).
+chooseMenuOption(2, Board):-
+    chooseBoardSize(BoardSize),
+    resetBoard([], BoardSize, Board).
+
+
+playerHandler('O', NewPlayer):-
+    NewPlayer = 'X'.
+playerHandler('X', NewPlayer):-
+    NewPlayer = 'O'.
+
+
 updateState(Board, _, NewState):-
     draw(Board),
     NewState = end,
@@ -36,13 +65,6 @@ updateState(Board, _, NewState):-
     NewState = end.
 updateState(_, State, NewState):-
     NewState = State.
-
-
-playerHandler('O', NewPlayer):-
-    NewPlayer = 'X'.
-playerHandler('X', NewPlayer):-
-    NewPlayer = 'O'.
-
 
 
 /*

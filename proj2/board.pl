@@ -2,16 +2,33 @@
 
 /**
 * Reset Board
+resetBoard([], 7, 7, FinalBoard).
 */
-resetBoard(Board, 0, FinalBoard):- FinalBoard = Board.
-resetBoard(Board, N, FinalBoard):-
-    N > 0,
-        N1 is N-1,
-        addBoardLine(Board, NewBoard),
-        resetBoard(NewBoard, N1, FinalBoard).
+resetBoard(Board, 0, _, FinalBoard):- FinalBoard = Board.
+resetBoard(Board, L, C, FinalBoard):-
+    L > 0,
+        L1 is L-1,
+        addBoardLine(Board, C, NewBoard),
+        resetBoard(NewBoard, L1, C, FinalBoard).
 
-addBoardLine(Board, NewBoard):-
-    append(Board, [[' ', ' ', ' ', ' ', ' ']], NewBoard).
+addBoardLine(Board, C, NewBoard):-
+    addLineElem([], C, NewLine),
+    NewLine1 = [NewLine],
+    append(Board, NewLine1, NewBoard).
+
+/*
+addLineElem([], C, FinalLine).
+*/
+%verified
+addLineElem(Line, 0, FinalLine):- FinalLine = Line.
+addLineElem(Line, C, FinalLine):-
+    C > 0, 
+        C1 is C-1,
+        addElem(Line, NewLine),
+        addLineElem(NewLine, C1, FinalLine).
+
+addElem(Line, NewLine):-
+    append(Line, ['X'], NewLine).
 
 /**
 * Change Line in Board

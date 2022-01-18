@@ -1,4 +1,32 @@
 /**
+* Menu Input Validation
+*/
+readMenuOption(Option):-
+    write('Option: '), read_number(Option),
+    validateMenuOption(Option).
+readMenuOption(_):- 
+    write('Invalid option, choose a number between 1 and 2.\n'),
+    readMenuOption(_).
+
+validateMenuOption(Option):-
+    Option == 1;
+    Option == 2.
+
+/**
+* Board Size Input Validation 
+*/
+readBoardSize(Size):-
+    write('Size: '), read_number(Size),
+    validateBoardSize(Size).
+readBoardSize(_):-
+    write('Invalid option, choose a number between 2 and 10.\n'),
+    readBoardSize(_).
+
+validateBoardSize(Size):-
+    Size >= 2, Size =< 10.
+
+
+/**
 * Move Validation
 */
 checkMove(Player, Board, OldY/OldX, NewY/NewX):-

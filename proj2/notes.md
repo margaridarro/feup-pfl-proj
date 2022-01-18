@@ -7,3 +7,6 @@
 **trace**:  
     trace.  
     notrace.  
+
+**path**
+cd Desktop/FEUP/3ano/PFL/pfl-proj

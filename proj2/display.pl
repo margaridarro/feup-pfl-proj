@@ -71,3 +71,9 @@ printWinnerMessage(Player):-
 
 printDrawMessage:-
     write('It\'s a draw, congratulations to both of you!').
+
+printWelcomeMessage:-
+    write('Welcome to Quixo!\nSelect one of the following options:\n'),
+    write('  1. Multiplayer - Quick Start (5x5)\n'),
+    %write('  2. Singleplayer\n'),
+    write('  2. Multiplayer - Custom Board Size\n').
