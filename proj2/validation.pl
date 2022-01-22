@@ -4,9 +4,9 @@
 readMenuOption(Option):-
     write('Option: '), read_number(Option),
     validateMenuOption(Option).
-readMenuOption(_):- 
+readMenuOption(Option):- 
     write('Invalid option, choose a number between 1 and 2.\n'),
-    readMenuOption(_).
+    readMenuOption(Option).
 
 validateMenuOption(Option):-
     Option == 1;
@@ -16,35 +16,31 @@ validateMenuOption(Option):-
 * Board Size Input Validation 
 */
 readBoardSize(Size):-
-    write('Size: '), read_number(Size),
-    validateBoardSize(Size).
-readBoardSize(_):-
-    write('Invalid option, choose a number between 2 and 10.\n'),
-    readBoardSize(_).
-
-validateBoardSize(Size):-
+    write('Board Size: '), read_number(Size),
     Size >= 2, Size =< 10.
-
+readBoardSize(Size):-
+    write('Invalid size, choose a number between 2 and 10.\n'),
+    readBoardSize(Size).
 
 /**
 * Move Validation
 */
-checkMove(Player, Board, OldY/OldX, NewY/NewX):-
-    checkInitialPos(Player, Board, OldY/OldX),
-    checkFinalPos(OldY/OldX, NewY/NewX).
+checkMove(Player, Board, Size, OldY/OldX, NewY/NewX):-
+    checkInitialPos(Player, Board, Size, OldY/OldX),
+    checkFinalPos(Size, OldY/OldX, NewY/NewX).
 /*
 Invalid Move:
-checkMove('X', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 0/5, 0/9).
+checkMove('X', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 0/5, 0/9).
 Valid Moves:
-checkMove('O', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 0/5, 0/9).
-checkMove('O', [['O',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 0/6, 4/6).
+checkMove('O', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 0/5, 0/9).
+checkMove('O', [['O',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 0/6, 4/6).
 */
 
 /**
 * Validate Piece Choice
 */
-checkInitialPos(Player, Board, Y/X):-
-    checkFramePos(Y/X),
+checkInitialPos(Player, Board, Size, Y/X):-
+    checkFramePos(Size, Y/X),
     getPosValue(Board, Y/X, Val),
     checkPlayerPermission(Player, Val).
 
@@ -54,9 +50,9 @@ checkPlayerPermission(Player, Val):-
 /**
 * Validate Piece Destination
 */
-checkFinalPos(OldY/OldX, NewY/NewX):-
+checkFinalPos(Size, OldY/OldX, NewY/NewX):-
     checkNotSamePos(OldY/OldX, NewY/NewX),
-    checkFramePos(NewY/NewX), 
+    checkFramePos(Size, NewY/NewX), 
     checkValidPos(OldY/OldX, NewY/NewX).
 
 checkNotSamePos(OldY/OldX, NewY/NewX):-
@@ -69,39 +65,41 @@ checkValidPos(OldY/OldX, NewY/NewX):-
 /**
 * Move Input Validation
 */
-readMove(OldY/OldX, NewY/NewX):-
+readMove(Size, OldY/OldX, NewY/NewX):-
     write('First, tell me the piece you would like to move.\n'),
-    readY(OldY), 
-    readX(OldX),
+    readY(Size, OldY), 
+    readX(Size, OldX),
     nl,
     write('Now, tell me the place where you would like insert the piece.\n'),
-    readY(NewY),
-    readX(NewX).
+    readY(Size, NewY),
+    readX(Size, NewX).
     
-readY(Y):-
+readY(Size, Y):-
     write('Line: '), read_number(Y),
-    Y >= 0,
-    Y =< 4, !.
-readY(Y):-
-    write('Invalid Input for Line, choose a number between 0 and 4\n'),
-    readY(Y).
+    Y >= 1,
+    Y =< Size, !.
+readY(Size, Y):-
+    write('Invalid Input for Line, choose a number between 1 and '), 
+    write(Size), nl,
+    readY(Size, Y).
+    
 
-readX(X):-
+readX(Size, X):-
     write('Column: '), read_number(X),
-    X >= 5,
-    X =< 9, !.
-readX(X):-
-    write('Invalid Input for Column, choose a number between 5 and 9\n'),
-    readX(X).
+    X >= 1,
+    X =< Size, !.
+readX(Size, X):-
+    write('Invalid Input for Column, choose a number between 1 and '),
+    write(Size), nl,
+    readX(Size, X).
 
 /**
 * General Validation
 */
-checkFramePos(Y/X):-
-    Y == 0; Y == 4; 
-    X == 5; X == 9.
+checkFramePos(Size, Y/X):-
+    Y == 1; Y == Size; 
+    X == 1; X == Size.
 
 getPosValue(Board, Y/X, Val):-
-    X1 is X - 5,
-    nth0(Y, Board, Line),
-    nth0(X1, Line, Val).
+    nth1(Y, Board, Line),
+    nth1(X, Line, Val).

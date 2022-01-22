@@ -19,7 +19,6 @@ addBoardLine(Board, C, NewBoard):-
 /*
 addLineElem([], C, FinalLine).
 */
-%verified
 addLineElem(Line, 0, FinalLine):- FinalLine = Line.
 addLineElem(Line, C, FinalLine):-
     C > 0, 
@@ -28,12 +27,14 @@ addLineElem(Line, C, FinalLine):-
         addLineElem(NewLine, C1, FinalLine).
 
 addElem(Line, NewLine):-
-    append(Line, ['X'], NewLine).
+    append(Line, [' '], NewLine).
 
 /**
 * Change Line in Board
 */
-changeBoardLine(_,5,_,_,NewBoard, FinalBoard):- FinalBoard = NewBoard.
+changeBoardLine(Board, Size, _, _, NewBoard, NewBoard):-
+    length(Board, Length),
+    Size == Length.
 changeBoardLine(Board, N, N, NewLine, NewBoard, FinalBoard):-
     Line = [NewLine],
     append(NewBoard, Line, NewBoard1),

@@ -42,9 +42,6 @@ read_num(X,T):-
 read_num(X,T):-read_num(X, T).
 
 
-
-
-
 /**
 * Read letter
 */

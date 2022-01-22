@@ -1,30 +1,27 @@
 :- use_module(library(lists)).
 
 :- [display, utils, board, validation, move, win].
+:- [test].
 
-createBoard(Board):-
-    resetBoard([], 5, Board),
-    printBoard(Board).
-/*
-stateManager(State):-
-    initialState.
+/**
+* main
 */
-
 play:-
     clear,
-    menu,
-    playGame('O', Board, playing). %initialplayer
+    menu(Board),
+    clear,
+    playGame('O', Board, playing), %initialplayer
     play.
 
-playGame(Player, Board, end):-
+playGame(_, Board, end):-
     printBoard(Board),
-    printPlayerTurnMessage(Player).
+    write('Press any key to return to menu'),
+    read_number(_).
 playGame(Player, Board, playing):-
     printBoard(Board),
     move(Player, Board, NewBoard),
-    printBoard(NewBoard),
     playerHandler(Player, NewPlayer),
-    updateState(Board, playing, NewState),
+    updateState(NewBoard, playing, NewState),
     playGame(NewPlayer, NewBoard, NewState).
 
 
@@ -34,21 +31,25 @@ playGame(Player, Board, playing):-
     * 1. Multiplayer - Quick Start
     * 2. Multiplayer - Custom Board Size
 */
-menu(Option):-
+menu(Board):-
     printWelcomeMessage,
     readMenuOption(Option),
-    chooseMenuOption(Option, Board).
+    chooseMenuOption(Option, Board). 
+
 /**
-* Option 1: Multiplayer (default 5x5?)
+* Option 1: Multiplayer (default 5x5)
 * Option 2: Custom Board Size
 */
 chooseMenuOption(1, Board):-
-    resetBoard([], 5, Board).
+    resetBoard([], 5, 5, Board).
 chooseMenuOption(2, Board):-
-    chooseBoardSize(BoardSize),
-    resetBoard([], BoardSize, Board).
+    readBoardSize(BoardSize),
+    resetBoard([], BoardSize, BoardSize, Board).
+    
 
-
+/**
+* Alternate between players
+*/
 playerHandler('O', NewPlayer):-
     NewPlayer = 'X'.
 playerHandler('X', NewPlayer):-
@@ -56,25 +57,19 @@ playerHandler('X', NewPlayer):-
 
 
 updateState(Board, _, NewState):-
-    draw(Board),
+    length(Board, Size),
+    draw(Board, Size),
     NewState = end,
     printDrawMessage.
 updateState(Board, _, NewState):-
-    win(Board, Winner),
+    length(Board, Size),
+    win(Board, Size, Winner),
     printWinMessage(Winner),
     NewState = end.
 updateState(_, State, NewState):-
     NewState = State.
 
-
 /*
-playTestWin:-
-    playGame('O', [[' ',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], playing).
-    
-moveTest(Player, Board):-
-    move(Player, Board, NewBoard),
-    printBoard(NewBoard).
-
-% moveTest('O', [[' ',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']]).
-
+Invalid Win:
+win([[' ',' ',' ',' ',' '],[' ',' ',' ',' ',' '],[' ',' ',' ',' ',' '],[' ',' ',' ',' ',' '],[' ',' ',' ',' ',' ']], Winner).
 */

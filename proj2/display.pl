@@ -2,45 +2,58 @@
 * Print Board
 */
 printBoard(Board):-
-    nl,
-    write('    5   6   7   8   9\n'),
-    write('  '),
-    print_n('-', 21),
-    printLines(Board, 5, 5),
-    nl,
-    write('  '),
-    print_n('-', 21), nl, nl.
+    write('\n '),
+    length(Board, L),
+    Size is L+1,
+    printHorizontalPlaces(Size, Size),
+    write('\n  -'),
+    Hifens is 4*L,
+    print_n('-', Hifens),
+    printLines(Board, Size, Size),
+    write('\n  -'),
+    print_n('-', Hifens), nl, nl.
+
+
+printHorizontalPlaces(1, _).
+printHorizontalPlaces(N, L):-
+    N1 is N-1,
+    write('   '),
+    House is L-N1,
+    write(House),
+    printHorizontalPlaces(N1, L).
 
 /**
 * Print Lines
 */
-printLines(_, 0, _).
+printLines(_, 1, _).
 printLines(Board, Lines, Cols):-
-    Lines > 0,
-        Idx is 5 - Lines,
+    Lines > 1,
+        Idx is Cols - Lines,
         Lines1 is Lines - 1,
         nth0(Idx, Board, Line),
         nl,
-        write(Idx),
-        printLine(Line, Lines1, Cols),
+        LineNumber is Idx+1,
+        write(LineNumber),
+        printLine(Line, Lines1, Cols, Cols),
         printLines(Board, Lines1, Cols).
 
 /**
 * Print Line
 */
-printLine(_, 0, 0):-
+printLine(_, 1, 1, _):-
    write(' |').
-printLine(_, _, 0):- 
+printLine(_, _, 1, Size):- 
     write(' |\n  '),
-    print_n('|---', 5), write('|').
-printLine(Line, Lines, Cols):-
-    Cols > 0,
-        Idx is 5 - Cols,
+    Size1 is Size-1,
+    print_n('|---', Size1), write('|').
+printLine(Line, Lines, Cols, Size):-
+    Cols > 1,
+        Idx is Size - Cols,
         Cols1 is Cols - 1, 
         nth0(Idx, Line, Elem),
         write(' | '),
         write(Elem),
-        printLine(Line, Lines, Cols1).
+        printLine(Line, Lines, Cols1, Size).
 
 
 /**
@@ -62,9 +75,7 @@ printPlayerTurnMessage(Player):-
     write(Player),
     write(', it\'s your turn.\n').
 
-
-
-printWinnerMessage(Player):-
+printWinMessage(Player):-
     write('Congratulations, Player '), 
     write(Player),
     write('!\nYou have won this Quixo game!\n').
