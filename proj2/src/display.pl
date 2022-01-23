@@ -112,9 +112,8 @@ printDrawMessage:-
 */
 printMenu:-
     write('Welcome to Quixo!\nSelect one of the following options:\n'),
-    write('  1. Multiplayer - Quick Start (5x5)\n'),
-    %write('  2. Singleplayer\n'),
-    write('  2. Multiplayer - Custom Board Size\n').
+    write('  1. Multiplayer\n'),
+    write('  2. Singleplayer\n').
 
 /**
 * Print back to menu message after a game has finished

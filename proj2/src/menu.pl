@@ -3,21 +3,19 @@
 /**
 * Initial Menu
 * Manage player options
-    * 1. Multiplayer - Quick Start
-    * 2. Multiplayer - Custom Board Size
+    * 1. Multiplayer
+    * 2. Singleplayer 
 */
-menu(Board/Player):-
+menu(Board/Player, Option):-
     printMenu,
     readMenuOption(Option),
-    chooseMenuOption(Option, Board/Player). 
+    prepareGame(Board/Player). 
 
 /**
-* Option 1: Multiplayer (default 5x5)
-* Option 2: Custom Board Size
+* Option 1: Multiplayer 
+* Option 2: Singleplayer
 */
-chooseMenuOption(1, Board/Player):-
-    initial_state(5, Board/Player).
-chooseMenuOption(2, Board/Player):-
+prepareGame(Board/Player):-
     readBoardSize(Size),
     initial_state(Size, Board/Player).
     
