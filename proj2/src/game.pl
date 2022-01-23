@@ -1,6 +1,6 @@
 :- use_module(library(lists)).
 
-:- [display, utils, board, validation, move, win, menu].
+:- [display, utils, board, validation, move, win, menu, ai].
 
 /**
 * main
@@ -17,7 +17,7 @@ playGame(Board/Player):-
     game_over(Board/Player, Winner),
     printReturnToMenuMessage.
 playGame(Board/Player):-
-    display_game(Board/Player),
+    display_game(Board/Player), !,
     makeMove(Board/Player, NewBoard/NewPlayer),
     playGame(NewBoard/NewPlayer).    
 
