@@ -1,15 +1,17 @@
 :- use_module(library(clpfd)).
 
+/**
+* Verify if any player has won the game
+*/
 win(Board, Size, Winner):-
     completeLine(Board, Size, Winner);
     completeColumn(Board, Size, Winner);
     completeDiagonals(Board, Size, Winner).
-/*
-printBoard([['X',' ',' ',' ',' '],[' ','X',' ',' ',' '],[' ',' ','X',' ',' '],[' ',' ',' ','X',' '],[' ',' ',' ',' ','X']]).
-Complete Diagonal:
-[['X',' ',' ',' ',' '],[' ','X',' ',' ',' '],[' ',' ','X',' ',' '],[' ',' ',' ','X',' '],[' ',' ',' ',' ','X']]
-*/
 
+
+/**
+* Verify if a draw has happened
+*/
 draw(Board, Size):-
     (
         completeLine(Board, Size, 'O'), 
@@ -19,11 +21,11 @@ draw(Board, Size):-
         completeColumn(Board, Size, 'O'), 
         completeColumn(Board, Size, 'X')
     ).
-/*
-Valid Draw:
-draw([['X','X','X','X','X'],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],['O','O','O','O','O']]).
-*/
 
+
+/**
+* Verify if any diagonal have been completed by any player
+*/
 completeDiagonals(Board, Size, Winner):-
     Size1 is Size-1,
     ( completeDiagonal1(Board, 0, Size1, 'X'); 
@@ -34,7 +36,10 @@ completeDiagonals(Board, Size, Winner):-
     ( completeDiagonal1(Board, 0, Size1, 'O');
       completeDiagonal2(Board, 0, Size1, 'O') ),
         Winner = 'O'.
-    
+
+/**
+* Verify if the first diagonal have been completed by a player
+*/
 completeDiagonal1(Board, Size, Size, Winner):-
     nth0(Size, Board, Line),
     nth0(Size, Line, Value),
@@ -45,11 +50,11 @@ completeDiagonal1(Board, N, Size, Winner):-
     Winner == Value,
     N1 is N+1,
     completeDiagonal1(Board, N1, Size, Winner).
-/*
-Valid Complete Diagonal1:
-completeDiagonal1([['X',' ',' ',' ',' '],[' ','X',' ',' ',' '],[' ',' ','X',' ',' '],[' ',' ',' ','X',' '],[' ',' ',' ',' ','X']], 0, 4,'X').
-*/
 
+
+/**
+* Verify if the second diagonal have been completed by a player
+*/
 completeDiagonal2(Board, N, 0, Winner):-
     nth0(N, Board, Line),
     nth0(0, Line, Value),
@@ -60,22 +65,12 @@ completeDiagonal2(Board, N, Size, Winner):-
     Winner == Value,
     N1 is N+1, Size1 is Size-1,
     completeDiagonal2(Board, N1, Size1, Winner).
-/*
-Valid Complete Diagonal2:
-completeDiagonal2([['X',' ',' ',' ','O'],[' ','X',' ','O',' '],[' ',' ','O',' ',' '],[' ','O',' ','X',' '],['O',' ',' ',' ','X']], 0, 4, 'O').
-*/
-
-
 
 /**
 * Verify if any board line is complete
 */
 completeLine(Board, Size, Player):-
     verifyLines(Board, 0, Size, Player).
-/*
-Complete Line:
-completeLine([['X','X','X','X','X'],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, Player).
-*/
 
 
 /**
@@ -84,18 +79,11 @@ completeLine([['X','X','X','X','X'],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],
 completeColumn(Board, Size, Player):-
     transpose(Board, TransposeBoard),
     verifyLines(TransposeBoard, 0, Size, Player).
-/*
-Complete Column:
-completeColumn([['X','O','X','X','X'],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, Player).
-
-Incomplete Column:
-completeColumn([['X','O','X','X','X'],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 'X').
-*/
 
 
 /**
 * Iterate lines
-* Verify each line 
+* Verify if each line is complete
 */
 verifyLines(_, Size, Size,_):- !, false.
 verifyLines(Board, N, _, Player):-

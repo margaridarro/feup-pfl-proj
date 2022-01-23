@@ -28,13 +28,7 @@ readBoardSize(Size):-
 checkMove(Player, Board, Size, OldY/OldX, NewY/NewX):-
     checkInitialPos(Player, Board, Size, OldY/OldX),
     checkFinalPos(Size, OldY/OldX, NewY/NewX).
-/*
-Invalid Move:
-checkMove('X', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 0/5, 0/9).
-Valid Moves:
-checkMove('O', [['O','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 0/5, 0/9).
-checkMove('O', [['O',' ',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' '],[' ','O',' ',' ',' ']], 5, 0/6, 4/6).
-*/
+
 
 /**
 * Validate Piece Choice
@@ -53,14 +47,17 @@ checkPlayerPermission(Player, Val):-
 checkFinalPos(Size, OldY/OldX, NewY/NewX):-
     checkNotSamePos(OldY/OldX, NewY/NewX),
     checkFramePos(Size, NewY/NewX), 
-    checkValidPos(OldY/OldX, NewY/NewX).
+    checkValidPos(OldY/OldX, NewY/NewX, Size).
 
 checkNotSamePos(OldY/OldX, NewY/NewX):-
     NewY \== OldY; NewX \== OldX.
 
-checkValidPos(OldY/OldX, NewY/NewX):-
-    NewY == OldY; NewX == OldX.
+checkValidPos(OldY/OldX, NewY/NewX, Size):-
+    (NewY == OldY, checkFrame(NewX, Size));
+    (NewX == OldX, checkFrame(NewY, Size)).
 
+checkFrame(New, Size):-
+    New == 1; New == Size.
 
 /**
 * Move Input Validation
