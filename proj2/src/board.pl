@@ -60,16 +60,10 @@ shiftLine(Line, OldX, 1, Value, NewLine):-
 
 newShiftLineLeft(Line, OldX, Value, FinalLine):-
     ValueList = [Value],
-    nl,
-    write('Line: '), write(Line), nl,
-    write('Remove idx: '), write(OldX), nl,
     nth0(OldX, Line, _, NewLine),
-    write('NewLine: '), write(NewLine), nl,
-    append(NewLine, ValueList, FinalLine), 
-    write('FinalLine: '), write(FinalLine), nl.
+    append(NewLine, ValueList, FinalLine). 
 
 newShiftLineRight(Line, OldX, Value, NewLine):-
-    write('Original Line: '), write(Line), nl,
     length(Line, L), 
     OldX1 is L-1-OldX,
     reverse(Line, ReverseLine),
@@ -98,7 +92,6 @@ changeLine(Board, Y, OldX, Value, Way, NewBoard):-
 changeCol(Board, X, OldY, Value, Way, NewBoard):-
     transpose(Board, TransposeBoard),
     nth0(X, TransposeBoard, Col),
-    write('Way: '), write(Way), nl,
     shiftLine(Col, OldY, Way, Value, NewCol), 
     changeBoardLine(TransposeBoard, 0, X, NewCol, [], FinalTransposeBoard),
     transpose(FinalTransposeBoard, NewBoard).

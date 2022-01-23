@@ -18,9 +18,7 @@ playGame(Board/Player):-
     printReturnToMenuMessage.
 playGame(Board/Player):-
     display_game(Board/Player),
-    %makeMove(Board/Player, NewBoard/NewPlayer),
-    move(Player, Board, NewBoard),
-    playerHandler(Player, NewPlayer),
+    makeMove(Board/Player, NewBoard/NewPlayer),
     playGame(NewBoard/NewPlayer).    
 
 /**
