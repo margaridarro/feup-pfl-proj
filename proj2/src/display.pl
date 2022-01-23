@@ -122,3 +122,6 @@ printMenu:-
 printReturnToMenuMessage:-
     write('Press any key to return to menu'),
     read_number(_).
+
+printPcPlayingMessage:-
+    write('\nPlayer X is thinking, press any key to hurry them up!'), read_number(_).

@@ -11,5 +11,6 @@ valid_moves(Board/Player, Moves):-
 * Level 2 leads to the best immediate move choice
 */
 choose_move(GameState, 1, Move):-
-    move(GameState, Move, _).
+    valid_moves(GameState, Moves),
+    random_member(Move, Moves).
 

@@ -7,27 +7,32 @@
 */
 play:-
     clear,
-    menu(Board/Player, Option),
+    menu(Board/Player, Mode),
     clear,
-    playGame(Board/Player, Option), 
+    playGame(Board/Player, Mode), 
     play.
 
-playGame(GameState, 1):-
-    playMultiplayer(GameState).
-playGame(Board/_, 2):-
-    playSingleplayer(Board/'O').
-
 /**
-* Multiplayer game loop
+* Game loop
+* Mode depends on menu option - Multiplayer or Singleplayer
 */
-playMultiplayer(Board/Player):-
+playGame(Board/Player, _):-
     game_over(Board/Player, _),
     printReturnToMenuMessage.
-playMultiplayer(Board/Player):-
+playGame(Board/Player, Mode):-
     clear, 
+    modeMove(Board/Player, NewBoard/NewPlayer, Mode),
+    playGame(NewBoard/NewPlayer, Mode).    
+
+modeMove(Board/Player, NewBoard/NewPlayer, Mode):-
+    (Mode == 1; Player == 'O'),
     display_game(Board/Player), !,
-    makeMove(Board/Player, NewBoard/NewPlayer),
-    playMultiplayer(NewBoard/NewPlayer).    
+    makeMove(Board/Player, NewBoard/NewPlayer).
+modeMove(Board/Player, NewBoard/NewPlayer, 2):-
+    printBoard(Board), !,
+    choose_move(Board/'X', 1, Move),
+    move(Board/'X', Move, NewBoard/NewPlayer),
+    printPcPlayingMessage.
 
 /**
 * Singleplayer game loop
@@ -46,7 +51,7 @@ playSingleplayer(Board/'X'):-
     printBoard(Board), !,
     choose_move(Board/'X', 1, Move),
     move(Board/'X', Move, NewBoard/NewPlayer),
-    write('\nPlayer X is thinking, press any key to hurry them up!'), read_number(_),
+    printPcPlayingMessage,
     playSingleplayer(NewBoard/NewPlayer).
 
 /**

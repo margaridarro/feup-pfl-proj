@@ -9,15 +9,19 @@
 menu(Board/Player, Option):-
     printMenu,
     readMenuOption(Option),
-    prepareGame(Board/Player). 
+    prepareGame(Board/Player, Option). 
 
 /**
 * Option 1: Multiplayer 
 * Option 2: Singleplayer
 */
-prepareGame(Board/Player):-
+prepareGame(Board/Player, 1):-
     readBoardSize(Size),
     initial_state(Size, Board/Player).
+prepareGame(Board/Player, _):-
+    readBoardSize(Size),
+    initial_state(Size, Board/_),
+    Player = 'O'.
     
 initial_state(Size, Board/Player):-    
     resetBoard([], Size, Size, Board),
