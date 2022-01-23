@@ -61,3 +61,9 @@ read_let(X,T):-
     X is D.
 read_let(X,T):-read_let(X, T).
 */
+
+remove_dups([], []).
+remove_dups([First | Rest], NewRest):-
+    member(First, Rest), remove_dups(Rest, NewRest).
+remove_dups([First | Rest], [First | NewRest]):- 
+    \+(member(First, Rest)), remove_dups(Rest, NewRest).

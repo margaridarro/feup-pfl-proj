@@ -1,3 +1,4 @@
+:- [display].
 /**
 * Menu Input Validation
 */
@@ -25,16 +26,15 @@ readBoardSize(Size):-
 /**
 * Move Validation
 */
-checkMove(Player, Board, Size, OldY/OldX, NewY/NewX):-
-    checkInitialPos(Player, Board, Size, OldY/OldX),
-    checkFinalPos(Size, OldY/OldX, NewY/NewX).
-
+validMove(Board/Player, Size, OldY/OldX/NewY/NewX):-
+    checkInitialPos(Board/Player, Size, OldY/OldX),
+    checkFinalPos(Size, OldY/OldX/NewY/NewX).
 
 /**
 * Validate Piece Choice
 */
-checkInitialPos(Player, Board, Size, Y/X):-
-    checkFramePos(Size, Y/X),
+checkInitialPos(Board/Player, Size, Y/X):-
+    (checkFrame(Size, Y);checkFrame(Size, X)),
     getPosValue(Board, Y/X, Val),
     checkPlayerPermission(Player, Val).
 
@@ -44,25 +44,31 @@ checkPlayerPermission(Player, Val):-
 /**
 * Validate Piece Destination
 */
-checkFinalPos(Size, OldY/OldX, NewY/NewX):-
-    checkNotSamePos(OldY/OldX, NewY/NewX),
-    checkFramePos(Size, NewY/NewX), 
-    checkValidPos(OldY/OldX, NewY/NewX, Size).
+checkFinalPos(Size, OldY/OldX/NewY/NewX):-
+    checkValidPos(OldY/OldX/NewY/NewX, Size),
+    checkNotSamePos(OldY/OldX/NewY/NewX),
+    (checkFrame(Size, NewY);checkFrame(Size, NewX)).
 
-checkNotSamePos(OldY/OldX, NewY/NewX):-
-    NewY \== OldY; NewX \== OldX.
+checkNotSamePos(OldY/OldX/NewY/NewX):-
+    NewY \= OldY; NewX \= OldX.
 
-checkValidPos(OldY/OldX, NewY/NewX, Size):-
-    (NewY == OldY, checkFrame(NewX, Size));
-    (NewX == OldX, checkFrame(NewY, Size)).
+checkValidPos(Y/OldX/Y/NewX, Size):-
+    checkFrame(Size, NewX).
+checkValidPos(OldY/X/NewY/X, Size):-
+    checkFrame(Size, NewY).
 
-checkFrame(New, Size):-
-    New == 1; New == Size.
+checkFrame(_, 0).
+checkFrame(Size, Size).
+
+getPosValue(Board, Y/X, Val):-
+    nth0(Y, Board, Line),
+    nth0(X, Line, Val).
+
 
 /**
 * Move Input Validation
 */
-readMove(Size, OldY/OldX, NewY/NewX):-
+readMove(Size, OldY/OldX/NewY/NewX):-
     write('First, tell me the piece you would like to move.\n'),
     readY(Size, OldY), 
     readX(Size, OldX),
@@ -90,13 +96,3 @@ readX(Size, X):-
     write(Size), nl,
     readX(Size, X).
 
-/**
-* General Validation
-*/
-checkFramePos(Size, Y/X):-
-    Y == 1; Y == Size; 
-    X == 1; X == Size.
-
-getPosValue(Board, Y/X, Val):-
-    nth1(Y, Board, Line),
-    nth1(X, Line, Val).

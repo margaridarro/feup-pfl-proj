@@ -59,9 +59,17 @@ printLine(Line, Lines, Cols, Size):-
 /**
 * Print help information in case of invalid move input
 */
-printInputTips:-
-    nl,
-    write('Your move choice was invalid. Here are some tips:\n'),
+printInputTips(OldY/OldX/NewY/NewX):-
+/*
+    OldY1 is OldY+1, 
+    OldX1 is OldX+1, 
+    NewY1 is NewY+1, 
+    NewX1 is NewX+1, */
+    write('\nYour move attempt'), 
+    /*('), write(OldY1), write(', '), write(OldX1),
+    write(') -> ('), write(NewY1), write(', '), write(NewX1), write(')'),
+    */
+    write(' was invalid.\n\nHere are some tips:\n'),
     write(' - If you Enter before inserting a valid number, the game will assume you chose 0;\n'),
     write(' - Choose a final position different from the initial one;\n'),
     write(' - You can only move pieces which are placed in the board frame;\n'),

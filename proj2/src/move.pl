@@ -5,11 +5,21 @@
 * Perfom movement
 */
 
-makeMove(Board/Player, NewBoard/NewPlayer):-    
+makeMove(Board/Player, NewBoard/NewPlayer):-   
     length(Board, Size),
     repeat, (
-        readMove(Size, OldY/OldX, NewY/NewX),
-        move(Board/Player, OldY/OldX/NewY/NewX, NewBoard/NewPlayer)
+        readMove(Size, OldY/OldX/NewY/NewX),
+        OldY1 is OldY-1, 
+        OldX1 is OldX-1, 
+        NewY1 is NewY-1, 
+        NewX1 is NewX-1, 
+        (
+            move(Board/Player, OldY1/OldX1/NewY1/NewX1, NewBoard/NewPlayer);
+            (   %clear,
+                printInputTips(OldY/OldX/NewY/NewX), 
+                display_game(Board/Player), !, fail
+            )
+        )
     ).
 
 /*
@@ -18,26 +28,26 @@ makeMove(Board/Player, NewBoard/NewPlayer):-
 */
 move(Board/Player, OldY/OldX/NewY/NewX, NewBoard/NewPlayer):- % GameState, Move, NewGameState
     length(Board, Size),
-    moveValidation(Player, Board, Size, OldY/OldX, NewY/NewX), 
-    clear,
-    OldY1 is OldY-1, 
-    OldX1 is OldX-1, 
-    NewY1 is NewY-1, 
-    NewX1 is NewX-1, 
-    movePiece(Board, OldY1/OldX1, NewY1/NewX1, Player, NewBoard),
+    Size1 is Size-1,
+    moveValidation(Board/Player, Size1, OldY/OldX/NewY/NewX),
+    %clear,
+    movePiece(Board, OldY/OldX, NewY/NewX, Player, NewBoard),
     playerHandler(Player, NewPlayer).
+
+
+valid_moves(Board/Player, Moves):-
+    length(Board, L),
+    Size is L-1,
+    findall(Y/X/NewY/NewX, (checkInitialPos(Board/Player, Size, Y/X), move(Board/Player, Y/X/NewY/NewX, _)), MoveList),
+    remove_dups(MoveList, Moves).
+
 
 /**
 * Validate move input
 * Ask and read new input if invalid
 */
-moveValidation(Player, Board, Size, OldY/OldX, NewY/NewX):-
-    checkMove(Player, Board, Size, OldY/OldX, NewY/NewX).
-moveValidation(_, Board, _, _/_, _/_):-
-    clear,
-    printBoard(Board),
-    printInputTips, !, fail.
-
+moveValidation(Board/Player, Size, OldY/OldX/NewY/NewX):-
+    validMove(Board/Player, Size, OldY/OldX/NewY/NewX).
 
 /**
 * Perform piece movement
