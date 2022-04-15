@@ -6,5 +6,5 @@ Grade: 17
 
 ## Project 2
 Programming Language: Prolog  
-Grade: 18.7 
+Grade: 18.7  
 Game: Quixo
